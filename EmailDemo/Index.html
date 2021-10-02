@@ -1,0 +1,294 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Email Demo (Client Webpage)</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" href="site.css" />
+</head>
+
+<body>
+	<header>
+
+	</header>
+	<div class="container">
+		<main role="main" class="pb-3">
+			<div class="text-center">
+				<h1 class="display-4">Send An Email!</h1>
+				<p>Visit my <a href="https://github.com/Tr-st-n">GitHub</a> to see the source for this project.</p>
+			</div>
+
+			<div class="row">
+				<form id="emailForm">
+					<div id="recipients"></div>
+					<a href="#" onclick="addAnotherRecipient()">Add a recipient.</a>
+					<hr />
+					<label class="ls" id="subjectL">Message Subject:</label>
+					<input class="lf" id="subject" type="text" value="Email subject here." />
+					<br /><br />
+					<label class="ls" id="textbodyL" style="vertical-align: top">Message Body:</label>
+					<textarea id="textbody" type="text" value="Email message here." rows="5" cols="38">Enter your email message body here.</textarea>
+					<hr />
+					<p>Upload attachments below.</p>
+					<div id="files"></div>
+					<hr />
+					<a href="#" onclick="addAnotherFile()">Add a file.</a>
+					<hr />
+				</form>
+			</div>
+
+			<div class="row">
+				<button id="send" class="btn btn-info">Send Email</button>
+			</div>
+
+			<div id="modalDiv" class="modal">
+				<div class="modal-content">
+					<span class="closeBtn" id="closeModal">&times;</span>
+					<p id="modalText" class="modalText">Text here.</p>
+					<img src="https://i.imgur.com/BRiy1dM.gif" class="loadingImg" id="ldngImg" />
+				</div>
+			</div>
+
+			<script type="text/javascript">
+				// IF YOU CHANGE YOUR LAUNCHSETTINGS.JSON, CHANGE THIS!!!
+				const SERVER_API_METHOD_URL = 'https://localhost:44358/Email';
+
+				window.onload = function () {
+					addAnotherRecipient();
+					addAnotherFile();
+					$('#send').click(function () {
+						var badInput = invalidInput();
+						if (badInput == null) {
+							notification('Sending email . . .', true);
+							$.ajax(SERVER_API_METHOD_URL, {
+								type: 'POST',
+								processData: false,
+								cache: false,
+								contentType: false,
+								crossDomain: true,
+								data: getFormData(),
+								success: function (data, status, xhr) {
+									notification('Email sent successfully!');
+								},
+								error: function (jqXhr, textStatus, errorMessage) {
+									notification('There was an error sending this email.');
+								}
+							});
+						}
+						else {
+							notification(badInput);
+						}
+					});
+				}
+				function invalidInput() {
+					var subject = document.getElementById('subject').value;
+					var textbody = document.getElementById('textbody').value;
+					if ((subject == null || subject === '') && (textbody == null || textbody === '')) {
+						return 'You must enter (at least) a subject OR a message body.'
+					}
+					var error = false;
+					var errorLabels = document.getElementsByClassName('errorTxt');
+					if (errorLabels.length == 0) {
+						return 'You need to add at least one recipient.';
+					}
+					Array.from(errorLabels).forEach(function (e) {
+						if (e.getAttribute('hidden') == null) {
+							error = true;
+						}
+					});
+					if (error) {
+						return 'You have invalid email fields.';
+					}
+					return null;
+				}
+				function getFormData() {
+
+					var formData = new FormData();
+
+					var recipientsJson = buildRecipientsJson();
+					var subject = document.getElementById('subject').value;
+					var textbody = document.getElementById('textbody').value;
+
+					formData.append('recipients', recipientsJson);
+					formData.append('subject', subject);
+					formData.append('textbody', textbody);
+
+					var fileDiv = document.getElementById('files');
+					fileDiv.childNodes.forEach(function (e) {
+						if (e.id != null && e.id.startsWith('file')) {
+							var file = e.files[0];
+							if (file != null) {
+								formData.append(e.id, file);
+							}
+						}
+					});
+
+					return formData;
+				}
+				function buildRecipientsJson() {
+					var inner = '';
+					document.getElementById('recipients').childNodes.forEach(function (e) {
+						if (e.id != null && e.id.startsWith('recipient')) {
+							var rLen = 'recipient'.length;
+							var index = e.id.substring(rLen);
+							inner += getRecipientJObj(index) + ', ';
+						}
+					});
+					var recipients = '[' + inner.substring(0, inner.length - 2) + ']';
+					return recipients;
+				}
+				function getRecipientJObj(index) {
+					var fname = document.getElementById('fname' + index).value;
+					var lname = document.getElementById('lname' + index).value;
+					var address = document.getElementById('address' + index).value;
+					return '{"Name": "' + fname + ' ' + lname + '", "Address": "' + address + '"}';
+				}
+
+				function addAnotherRecipient() {
+					var recipientsDiv = document.getElementById('recipients');
+					var itr = 0;
+					recipientsDiv.childNodes.forEach(function (e) {
+						if (e.id != null && e.id.startsWith('recipient')) {
+							itr++;
+						}
+					});
+					var newDiv = document.createElement('div');
+					newDiv.id = 'recipient' + itr;
+					recipientsDiv.appendChild(newDiv);
+
+					var errorTxt = document.createElement('p');
+					errorTxt.classList.add('errorTxt');
+					errorTxt.hidden = true;
+					newDiv.appendChild(errorTxt);
+
+					var nameLabel = document.createElement('label');
+					nameLabel.classList.add('ls');
+					nameLabel.id = 'name' + itr + 'L';
+					nameLabel.innerHTML = 'Recipient Name:';
+					newDiv.appendChild(nameLabel);
+
+					var fName = document.createElement('input');
+					fName.classList.add('sf');
+					fName.id = 'fname' + itr;
+					fName.type = 'text';
+					fName.value = 'First Name';
+					newDiv.appendChild(fName);
+
+					var lName = document.createElement('input');
+					lName.classList.add('sf');
+					lName.id = 'lname' + itr;
+					lName.type = 'text';
+					lName.value = 'Last Name';
+					newDiv.appendChild(lName);
+
+					var br = document.createElement('br');
+					newDiv.appendChild(br);
+
+					var addressLabel = document.createElement('label');
+					addressLabel.classList.add('ls');
+					addressLabel.id = 'address' + itr + 'L';
+					addressLabel.innerHTML = 'Recipient E-Mail Address:';
+					newDiv.appendChild(addressLabel);
+
+					var address = document.createElement('input');
+					address.classList.add('lf');
+					address.id = 'address' + itr;
+					address.type = 'email';
+					address.value = 'email@example.com';
+					address.addEventListener('input', function () {
+						if (!validEmail(address.value)) {
+							errorTxt.innerHTML = 'Invalid email format.';
+							errorTxt.hidden = false;
+						}
+						else {
+							errorTxt.hidden = true;
+							errorTxt.innerHTML = '';
+						}
+					});
+					newDiv.appendChild(address);
+
+					var br2 = document.createElement('br');
+					newDiv.appendChild(br2);
+
+					var remove = document.createElement('a');
+					remove.href = '#';
+					remove.addEventListener('click', function () {
+						newDiv.remove();
+					});
+					remove.classList.add('rb');
+					remove.innerHTML = 'Remove recipient.'
+					newDiv.appendChild(remove);
+
+					var hr = document.createElement('hr');
+					newDiv.appendChild(hr);
+				}
+				function addAnotherFile() {
+					var fileDiv = document.getElementById('files');
+					var itr = 0;
+					fileDiv.childNodes.forEach(function (e) {
+						if (e.id != null && e.id.startsWith('file')) {
+							itr++;
+						}
+					});
+
+					var br = document.createElement('br');
+					fileDiv.appendChild(br);
+
+					var newFile = document.createElement('input');
+					newFile.id = 'file' + itr;
+					newFile.type = 'file';
+					newFile.classList.add('fi');
+					fileDiv.appendChild(newFile);
+
+					var remove = document.createElement('a');
+					remove.href = '#';
+					remove.addEventListener('click', function () {
+						newFile.remove();
+						remove.remove();
+						br.remove();
+					});
+					remove.innerHTML = 'Remove attatchment.'
+					fileDiv.appendChild(remove);
+				}
+
+				function validEmail(address) {
+					//credit to credit to http://asp.net-informations.com/communications/asp-email-validation.htm for regex
+					var regex = new RegExp('^([0-9a-zA-Z]([-\\.\\w]*[0-9a-zA-Z])*@@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$');
+					return regex.test(address);
+				}
+
+				var modal = document.getElementById('modalDiv');
+				var modalText = document.getElementById('modalText');
+				var closeSpan = document.getElementById('closeModal');
+				var loadingImg = document.getElementById('ldngImg');
+				closeSpan.onclick = function () {
+					modal.style.display = "none";
+				}
+				window.onclick = function (e) {
+					if (e.target == modal) {
+						modal.style.display = "none";
+					}
+				}
+
+				function notification(message, loading = false) {
+					if (loading) {
+						loadingImg.style.display = 'block';
+					}
+					else {
+						loadingImg.style.display = 'none';
+					}
+					modalText.innerHTML = message;
+					modal.style.display = 'block';
+				}
+			</script>
+		</main>
+	</div>
+	<footer>
+		<div class="container">
+			Simple HTML/CSS/JS web page for calling .NET Core 3.1 Web API and Class Library for sending emails.
+		</div>
+	</footer>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>
