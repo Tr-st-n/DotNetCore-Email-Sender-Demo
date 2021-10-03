@@ -9,15 +9,19 @@
   * [Open](#open)
   * [Configure](#configuration)
   * [Start](#start)
+* [Usage](#usage)
+  * [Lite Webpage](#lite-webpage)
+  * [Postman](#postman)
  
- ## Installation and Setup
+## Installation and Setup
  
 ### Download
-Go to the repo's [main page](../../), click the "Code" dropdown and select "[Download ZIP](../../archive/refs/heads/main.zip)" or "[Open with GitHub Desktop](x-github-client://openRepo/https://github.com/Tr-st-n/DotNetCore-Email-Sender-Demo)". Also, you can [use this repository as a template](../../generate) if you wish.
+- Go to the repo's [main page](../../), click the "Code" dropdown and select "[Download ZIP](../../archive/refs/heads/main.zip)" or "[Open with GitHub Desktop](x-github-client://openRepo/https://github.com/Tr-st-n/DotNetCore-Email-Sender-Demo)".
+- You can also [use this repository as a template](../../generate) if you wish.
 ![Download or open in GitHub Desktop](https://i.imgur.com/8I6TxCx.gif)
 
 ### Open
-Open the Visual Studio solution [EmailDemo.sln](/EmailDemo/EmailDemo.sln) in the [EmailDemo folder](/EmailDemo/).
+- Open the Visual Studio solution [EmailDemo.sln](/EmailDemo/EmailDemo.sln) in the [EmailDemo folder](/EmailDemo/).
 ![Open EmailDemo.sln](https://i.imgur.com/jSIgu62.gif)
 
 ### Configuration
@@ -31,22 +35,22 @@ Open the Visual Studio solution [EmailDemo.sln](/EmailDemo/EmailDemo.sln) in the
 ![update index.html SERVER_API_METHOD_URL](https://i.imgur.com/0aDlUcO.gif)
 
 ### Start
-If you've made all the changes you need to and your credentials in the [appsettings.json](/EmailDemo/EmailWebAPI/appsettings.json) are valid, you should be good to go!
+- If you've made all the changes you need to and your credentials in the [appsettings.json](/EmailDemo/EmailWebAPI/appsettings.json) are valid, you should be good to go!
 ![run in IIS Express](https://i.imgur.com/BwfgKUF.png)
-
-**NOTE:** You will likely receive a "Security Warning" while starting up the project for the first time regarding installing a root certificate. This is normal. Click "Yes".
+- **NOTE:** You will likely receive a "Security Warning" while starting up the project for the first time regarding installing a root certificate. This is normal. Click "Yes".
 
 ### Caveats
-If you are using GMail as your SMTP host, you will need to go into your [account security settings](https://myaccount.google.com/security) and turn ON "Less secure app access".
-    ![less secure app access](https://i.imgur.com/iM2fEmg.png)
+- If you are using GMail as your SMTP host, you will need to go into your [account security settings](https://myaccount.google.com/security) and turn ON "Less secure app access".
+![less secure app access](https://i.imgur.com/iM2fEmg.png)
 
 ## Usage
 
-### Using the "lite" webpage
-To use the lite webpage as a client, open the [index.html](/EmailDemo/Index.html) in a chromium browser while your app is running on IIS Express. If you change any controller routing or the socket that the app runs on, make sure to update the `const SERVER_API_METHOD_URL` in the [index.html](/EmailDemo/Index.html).
-    ![lite webpage demo](https://i.imgur.com/gIB9WTE.gif)
+### Lite webpage
 
-### Using Postman
+- To use the lite webpage as a client, open the [index.html](/EmailDemo/Index.html) in a chromium browser while your app is running on IIS Express. If you change any controller routing or the socket that the app runs on, make sure to update the `const SERVER_API_METHOD_URL` in the [index.html](/EmailDemo/Index.html).
+![lite webpage demo](https://i.imgur.com/gIB9WTE.gif)
+
+### Postman
 1. Create a new `POST` request sending the content-type `form-data` to `https://localhost:{PORT}/{CONTROLLER}`. Default URL: `https://localhost:44358/Email`. URL can be changed in [launchsettings.json](/EmailDemo/EmailWebAPI/Properties/launchSettings.json)).
 ![postman ss 1](https://i.imgur.com/UIpIyPN.png)
 2. The request body should have a minimum of two key value pairs: 1) `recipients` and 2) `subject` OR `textbody`. The `subject` and `textbody` value(s) should be plain text. The `recipients` value should be a json object. Below is an example of a valid `recipients` value:
