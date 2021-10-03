@@ -36,6 +36,7 @@
 
 ### Start
 - If you've made all the changes you need to and your credentials in the [appsettings.json](/EmailDemo/EmailWebAPI/appsettings.json) are valid, you should be good to go!
+  
   ![run in IIS Express](https://i.imgur.com/BwfgKUF.png)
 - **NOTE:** You will likely receive a "Security Warning" while starting up the project for the first time regarding installing a root certificate. This is normal. Click "Yes".
 
