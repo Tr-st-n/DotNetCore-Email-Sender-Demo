@@ -1,9 +1,18 @@
 # .NET Core Email Sender Demo
  This is a .NET Core 3.1 Web API and Class Library VS demonstration solution for sending emails using [jstedfast](https://github.com/jstedfast)'s [MailKit](https://github.com/jstedfast/MailKit).
  
+ Table of Contents
+---
+
+* [Install & Setup](#installation-and-setup)
+  * [Download](#download)
+  * [Open](#open)
+  * [Configure](#configuration)
+  * [Start](#start)
+ 
  ## Installation and Setup
  
- ### Download
+### Download
 Go to the repo's [main page](../../), click the "Code" dropdown and select "[Download ZIP](../../archive/refs/heads/main.zip)" or "[Open with GitHub Desktop](x-github-client://openRepo/https://github.com/Tr-st-n/DotNetCore-Email-Sender-Demo)". Also, you can [use this repository as a template](../../generate) if you wish.
 ![Download or open in GitHub Desktop](https://i.imgur.com/8I6TxCx.gif)
 
@@ -17,12 +26,11 @@ Open the Visual Studio solution [EmailDemo.sln](/EmailDemo/EmailDemo.sln) in the
 ![appsettings.json](https://i.imgur.com/Ex6iwdg.gif)
 2. (Optional) Head to the [nlog.config](/EmailDemo/EmailWebAPI/nlog.config) file and change the log file directory by editing the "fileName" attribute under the "targets" section (defaults to `C:\EmailDemoLogs\`).
 ![nlog.config](https://i.imgur.com/tQJdXJc.gif)
-
 #### LiteWebPage
 3. (Optional) If you make any changes to the [launchsettings.json](/EmailDemo/EmailWebAPI/Properties/launchSettings.json) or the controller routing and want to use the the web page supplied as a simple client to interact with the web API, make sure to update the `const SERVER_API_METHOD_URL` of the [index.html](/EmailDemo/Index.html).
 ![update index.html SERVER_API_METHOD_URL](https://i.imgur.com/0aDlUcO.gif)
 
-### You're Done
+### Start
 If you've made all the changes you need to and your credentials in the [appsettings.json](/EmailDemo/EmailWebAPI/appsettings.json) are valid, you should be good to go!
 ![run in IIS Express](https://i.imgur.com/BwfgKUF.png)
 
