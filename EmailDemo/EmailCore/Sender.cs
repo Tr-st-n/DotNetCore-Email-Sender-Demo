@@ -25,35 +25,39 @@ namespace EmailCore
         /// <summary> Asynchronously sends an email using a EmailCore.Message argument. Returns a EmailCore.BaseSenderResult. </summary>
         public async Task<BaseSenderResult> SendAsync(Message message)
         {
-            var builtMessage = BuildMessage(message);
+            var builtMessage = await BuildMessage(message);
             return await TrySendAsync(builtMessage);
         }
 
         /// <summary> Builds and returns a MimeKit.MimeMessage using a EmailCore.Message argument. </summary>
-        private MimeMessage BuildMessage(Message message)
+        private async Task<MimeMessage> BuildMessage(Message message)
         {
             var builtMessage = new MimeMessage();
-            builtMessage.From.Add(new MailboxAddress(_config.SentFromName, _config.SentFromAddress));
-            builtMessage.To.AddRange(message.To);
-            builtMessage.Subject = message.Subject;
-            var builder = new BodyBuilder
+
+            await Task.Run(() =>
             {
-                TextBody = message.Body
-            };
-            if (message.Attachments != null && message.Attachments.Count > 0)
-            {
-                byte[] fileByteArray;
-                foreach (var attatchment in message.Attachments)
+                builtMessage.From.Add(new MailboxAddress(_config.SentFromName, _config.SentFromAddress));
+                builtMessage.To.AddRange(message.To);
+                builtMessage.Subject = message.Subject;
+                var builder = new BodyBuilder
                 {
-                    using (var stream = new MemoryStream())
+                    TextBody = message.Body
+                };
+                if (message.Attachments != null && message.Attachments.Count > 0)
+                {
+                    byte[] fileByteArray;
+                    foreach (var attatchment in message.Attachments)
                     {
-                        attatchment.CopyTo(stream);
-                        fileByteArray = stream.ToArray();
+                        using (var stream = new MemoryStream())
+                        {
+                            attatchment.CopyTo(stream);
+                            fileByteArray = stream.ToArray();
+                        }
+                        builder.Attachments.Add(attatchment.FileName, fileByteArray, ContentType.Parse(attatchment.ContentType));
                     }
-                    builder.Attachments.Add(attatchment.FileName, fileByteArray, ContentType.Parse(attatchment.ContentType));
                 }
-            }
-            builtMessage.Body = builder.ToMessageBody();
+                builtMessage.Body = builder.ToMessageBody();
+            });
 
             return builtMessage;
         }
