@@ -254,7 +254,7 @@
 
 				function validEmail(address) {
 					//credit to credit to http://asp.net-informations.com/communications/asp-email-validation.htm for regex
-					var regex = new RegExp('^([0-9a-zA-Z]([-\\.\\w]*[0-9a-zA-Z])*@@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$');
+					var regex = new RegExp('^([0-9a-zA-Z]([-\\.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$');
 					return regex.test(address);
 				}
 
