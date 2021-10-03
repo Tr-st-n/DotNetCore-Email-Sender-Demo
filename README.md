@@ -128,7 +128,7 @@ The following projects rely on the dependences:
 
 ### LiteWebPage
 - [Index.html repo](/EmailDemo/Index.html), [site.css repo](/EmailDemo/site.css)
-- **Summary**: Webpage containing HTML, CSS and JS that sendings POST requests to EmailWebAPI using AJAX.
+- **Summary**: Webpage containing HTML, CSS and JS that sends POST requests to EmailWebAPI using AJAX.
 - Remarks: If you update the URL/routing of the web API, make sure to update the `const SERVER_API_METHOD_URL` in [index.html](/EmailDemo/Index.html).
 
 ## Disclaimers
