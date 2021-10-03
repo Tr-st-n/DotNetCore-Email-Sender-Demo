@@ -1,8 +1,7 @@
 # .NET Core Email Sender Demo
  This is a .NET Core 3.1 Web API and Class Library VS demonstration solution for sending emails using [jstedfast](https://github.com/jstedfast)'s [MailKit](https://github.com/jstedfast/MailKit).
  
- Table of Contents
----
+ ## Table of Contents
 
 * [Install & Setup](#installation-and-setup)
   * [Download](#download)
@@ -12,6 +11,7 @@
 * [Usage](#usage)
   * [Lite Webpage](#lite-webpage)
   * [Postman](#postman)
+* [Dependencies](#dependencies)
  
 ## Installation and Setup
  
@@ -70,3 +70,24 @@
   3. Optional data: you can add email attachment files for your request directly to Postman. Any unique key will work.
     ![postman ss 3](https://i.imgur.com/9XSqaEc.png)
   4. Make sure your app is running and then press "Send"!
+
+## Dependencies
+The following projects rely on the dependences:
+- **EmailCore** (Class Library)
+  - Frameworks
+    1. Microsoft.NETCore.App (3.1.0)
+  - Packages
+    1. [MailKit (2.15.0)](https://www.nuget.org/packages/MailKit/2.15.0)
+    2. [Microsoft.AspNetCore.Http.Features (5.0.10)](https://www.nuget.org/packages/Microsoft.AspNetCore.Http.Features/5.0.10)
+    3. [Microsoft.Extensions.Logging.Abstractions (5.0.0)](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0)
+- **EmailWebAPI** (Web API)
+  - Frameworks
+    1. Microsoft.AspNetCore.App (3.1.10)
+    2. Microsoft.NETCore.App (3.1.0)
+  - Packages
+    1. [Newtonsoft.Json (13.0.1)](https://www.nuget.org/packages/Newtonsoft.Json/13.0.1)
+    2. [NLog (4.7.11)](https://www.nuget.org/packages/NLog/4.7.11)
+    3. [NLog.Extensions.Logging (1.7.4)](https://www.nuget.org/packages/NLog.Extensions.Logging/1.7.4)
+    4. [NLog.Web.AspNetCore (4.14.0)](https://www.nuget.org/packages/NLog.Web.AspNetCore/4.14.0)
+  - Projects
+    1. EmailCore
