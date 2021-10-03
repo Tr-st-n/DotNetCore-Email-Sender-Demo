@@ -30,12 +30,12 @@
 ![Open EmailDemo.sln](https://i.imgur.com/jSIgu62.gif)
 
 ### Configuration
-#### EmailWebAPI
+#### EmailWebAPI Config
 1. Open the [appsettings.json](/EmailDemo/EmailWebAPI/appsettings.json) file and replace the faux settings under the "EmailConfig" section with valid credentials.
 ![appsettings.json](https://i.imgur.com/Ex6iwdg.gif)
 2. (Optional) Head to the [nlog.config](/EmailDemo/EmailWebAPI/nlog.config) file and change the log file directory by editing the "fileName" attribute under the "targets" section (defaults to `C:\EmailDemoLogs\`).
 ![nlog.config](https://i.imgur.com/tQJdXJc.gif)
-#### LiteWebPage
+#### LiteWebPage Config
 3. (Optional) If you make any changes to the [launchsettings.json](/EmailDemo/EmailWebAPI/Properties/launchSettings.json) or the controller routing and want to use the the web page supplied as a simple client to interact with the web API, make sure to update the `const SERVER_API_METHOD_URL` of the [index.html](/EmailDemo/Index.html).
 ![update index.html SERVER_API_METHOD_URL](https://i.imgur.com/0aDlUcO.gif)
 
