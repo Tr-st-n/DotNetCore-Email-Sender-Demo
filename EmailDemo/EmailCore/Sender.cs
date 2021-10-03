@@ -40,10 +40,10 @@ namespace EmailCore
             {
                 TextBody = message.Body
             };
-            if (message.Attatchments != null && message.Attatchments.Count > 0)
+            if (message.Attachments != null && message.Attachments.Count > 0)
             {
                 byte[] fileByteArray;
-                foreach (var attatchment in message.Attatchments)
+                foreach (var attatchment in message.Attachments)
                 {
                     using (var stream = new MemoryStream())
                     {
