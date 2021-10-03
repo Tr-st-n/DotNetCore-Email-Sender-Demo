@@ -12,6 +12,11 @@
   * [Lite Webpage](#lite-webpage)
   * [Postman](#postman)
 * [Dependencies](#dependencies)
+* [Solution Breakdown](#solution-breakdown)
+  * [EmailCore](#emailcore)
+  * [EmailWebAPI](#emailwebapi)
+  * [LiteWebPage](#litewebpage)
+* [Disclaimers](#disclaimers)
  
 ## Installation and Setup
  
@@ -25,12 +30,12 @@
 ![Open EmailDemo.sln](https://i.imgur.com/jSIgu62.gif)
 
 ### Configuration
-#### EmailWebAPI
+#### EmailWebAPI Config
 1. Open the [appsettings.json](/EmailDemo/EmailWebAPI/appsettings.json) file and replace the faux settings under the "EmailConfig" section with valid credentials.
 ![appsettings.json](https://i.imgur.com/Ex6iwdg.gif)
 2. (Optional) Head to the [nlog.config](/EmailDemo/EmailWebAPI/nlog.config) file and change the log file directory by editing the "fileName" attribute under the "targets" section (defaults to `C:\EmailDemoLogs\`).
 ![nlog.config](https://i.imgur.com/tQJdXJc.gif)
-#### LiteWebPage
+#### LiteWebPage Config
 3. (Optional) If you make any changes to the [launchsettings.json](/EmailDemo/EmailWebAPI/Properties/launchSettings.json) or the controller routing and want to use the the web page supplied as a simple client to interact with the web API, make sure to update the `const SERVER_API_METHOD_URL` of the [index.html](/EmailDemo/Index.html).
 ![update index.html SERVER_API_METHOD_URL](https://i.imgur.com/0aDlUcO.gif)
 
@@ -74,14 +79,14 @@
 
 ## Dependencies
 The following projects rely on the dependences:
-- **EmailCore** (Class Library)
+- [**EmailCore**](/EmailDemo/EmailCore) (Class Library)
   - Frameworks
     1. Microsoft.NETCore.App (3.1.0)
   - Packages
     1. [MailKit (2.15.0)](https://www.nuget.org/packages/MailKit/2.15.0)
     2. [Microsoft.AspNetCore.Http.Features (5.0.10)](https://www.nuget.org/packages/Microsoft.AspNetCore.Http.Features/5.0.10)
     3. [Microsoft.Extensions.Logging.Abstractions (5.0.0)](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0)
-- **EmailWebAPI** (Web API)
+- [**EmailWebAPI**](/EmailDemo/EmailWebAPI) (Web API)
   - Frameworks
     1. Microsoft.AspNetCore.App (3.1.10)
     2. Microsoft.NETCore.App (3.1.0)
@@ -91,4 +96,40 @@ The following projects rely on the dependences:
     3. [NLog.Extensions.Logging (1.7.4)](https://www.nuget.org/packages/NLog.Extensions.Logging/1.7.4)
     4. [NLog.Web.AspNetCore (4.14.0)](https://www.nuget.org/packages/NLog.Web.AspNetCore/4.14.0)
   - Projects
-    1. EmailCore
+    1. [EmailCore](/EmailDemo/EmailCore)
+
+## Solution Breakdown
+### EmailCore
+- [Repo](/EmailDemo/EmailCore)
+- Namespace: `EmailCore`
+- **Summary**: Sends emails using the settings in the [appsettings.json](/EmailDemo/EmailWebAPI/appsettings.json) and logs and returns results.
+- Classes & Interfaces:
+    | File Name                                  | Kind            | Summary  |
+    |--------------------------------------------|-----------------|----------|
+    | Addressee.cs                               | Public Class    | Properties hold a `string Name` and an email `Address`. Contains a method `Valid()` that returns a boolean (if `Address` is a syntactically valid email address). |
+    | BaseSenderResult.cs                        | Abstract Class  | Abstract class containing a `bool Successful`. Returned by `ISender` interface. |
+    | EmailConfig.cs                             | Public Class    | Used as a singleton for holding our email configuration from `appsettings.json`. |
+    | ISender.cs                                 | Interface       | Interface contracting a class to accept a `Message` argument and return a `BaseSenderResult`. |
+    | Message.cs                                 | Public Class    | All of the information in an email: recipients (`List<MimeKit.MailboxAddress> To`), `string Subject`, `string Body`, attachments (`IFormFileCollection Attachments`). |
+    | RichSenderResult.cs                        | Public Class    | Inherits from BaseSenderResult. Implements property containing `List<Exception> Exceptions` for controller to return rich feedback to client. |
+    | Sender.cs                                  | Public Class    | Implements `ISender` interface. Sends an email and returns the results in a `BaseSenderResult` that can be cast to a `RichSenderResult` optionally. |
+
+### EmailWebAPI
+- [Repo](/EmailDemo/EmailWebAPI)
+- Namespace: `EmailWebAPI`
+- **Summary**: Web API with `Email` Controller that allows clients to `POST` `form-data` content-type requests in order to send emails.
+- Files of interest:
+    | File Name & Directory                      | Kind               | Summary |
+    |--------------------------------------------|--------------------|---------|
+    | Properties/launchSettings.json             | json config        | Launch settings for project including application URL. |
+    | Controllers/EmailController.cs             | API Controller     | Sends emails, returns results. |
+    | appsettings.json                           | json config        | Application settings; includes email host/user credentials/information. |
+    | nlog.config                                | xml config         | Settings for NLog logging including log file directory. |
+
+### LiteWebPage
+- [Index.html repo](/EmailDemo/Index.html), [site.css repo](/EmailDemo/site.css)
+- **Summary**: Webpage containing HTML, CSS and JS that sends POST requests to EmailWebAPI using AJAX.
+- Remarks: If you update the URL/routing of the web API, make sure to update the `const SERVER_API_METHOD_URL` in [index.html](/EmailDemo/Index.html).
+
+## Disclaimers
+This repository is a demonstration only and should not be used in production. User input is not stringently validated and is susceptible to abuse. The web API and lite webpage client are currently configured to use [CORS](https://www.google.com/search?q=Cors) for demonstration purposes. Ask your doctor if this code is right for you.
