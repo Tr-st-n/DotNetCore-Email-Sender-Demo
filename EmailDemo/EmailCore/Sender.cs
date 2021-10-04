@@ -65,10 +65,7 @@ namespace EmailCore
         /// <summary> Attempts to send an email X times with Y interval between attempts and a timeout per attempt of Z (set in appsettings.json) using a MimeKit.MimeMessage argument. Returns a EmailCore.RichSenderResult. </summary>
         private async Task<RichSenderResult> TrySendAsync(MimeMessage mimeMessage)
         {
-            var result = new RichSenderResult 
-            { 
-                Exceptions = new List<Exception>()
-            };
+            var result = new RichSenderResult();
             int attempts = 0;
             Exception error;
             do
@@ -93,21 +90,23 @@ namespace EmailCore
                         await client.DisconnectAsync(true);
                         client.Dispose();
                         _cts.Dispose();
+                        attempts++;
                     }
                 }
 
                 if (error != null)
                 {
-                    result.Exceptions.Add(error);
+                    if (error is TimeoutException || error is TaskCanceledException || error is OperationCanceledException)
+                        result.Errors.Add(new SenderError(SenderErrorKind.TimeOut, $"{error.Message}\n{error.StackTrace}"));
+                    else
+                        result.Errors.Add(new SenderError(SenderErrorKind.Generic, $"{error.Message}\n{error.StackTrace}"));
 
                     if (_config.FailDelay > 0)
                         await Task.Delay(_config.FailDelay);
-
-                    attempts++;
                 }
             } while (error != null & attempts < _config.SendAttempts);
             result.Successful = error == null;
-            LogResult(result.Successful, attempts, mimeMessage, result.Exceptions);
+            LogResult(result.Successful, attempts, mimeMessage, result.Errors);
             return result;
         }
 
@@ -116,18 +115,18 @@ namespace EmailCore
         /// <param name="attempts"> How many attempts it took to succeed (successful attempts included). </param>
         /// <param name="message"> The MimeKit.MimeMessage that was sent. </param>
         /// <param name="exceptions"> Any exceptions that occurred while trying to send the message. </param>
-        private void LogResult(bool success, int attempts, MimeMessage message, List<Exception> exceptions)
+        private void LogResult(bool success, int attempts, MimeMessage message, List<SenderError> errors)
         {
-            string recipientInfo = BuildRecipientInfo(message) ?? "None.";
+            string recipientInfo = BuildRecipientInfoString(message) ?? "None.";
             string lead = success ? "Successfully sent" : "Failed to send";
-            string exceptionInfo = BuildExceptionInfo(exceptions);
+            string exceptionInfo = BuildErrorInfoString(errors);
             int attCount = message.Attachments.Count(); // linq - i know
-            _logger.LogInformation("{success} email to \"{recipients}\" after {attempts} attempt(s).\nSubject: \"{subject}\"\nText body: \"{textBody}\"\nNo. of Attachments: {noOfAttatchments}\nExceptions: {exceptions}", lead, recipientInfo, attempts, message.Subject, message.TextBody, attCount, exceptionInfo);
+            _logger.LogInformation("{success} email to \"{recipients}\" after {attempts} attempt(s).\nSubject: \"{subject}\"\nText body: \"{textBody}\"\nNo. of Attachments: {noOfAttatchments}\nErrors: {exceptions}", lead, recipientInfo, attempts, message.Subject, message.TextBody, attCount, exceptionInfo);
         }
 
         #region Logger Helpers
         /// <summary> Returns a string containing the MimeKit.MimeMessage (argument) recipient information. </summary>
-        private static string BuildRecipientInfo(MimeMessage message)
+        private static string BuildRecipientInfoString(MimeMessage message)
         {
             var builder = new StringBuilder();
             foreach (MailboxAddress address in message.To.Mailboxes)
@@ -135,14 +134,14 @@ namespace EmailCore
                 // name
                 builder.Append('(');
                 if (string.IsNullOrEmpty(address.Name))
-                    builder.Append("NULL");
+                    builder.Append("(null)");
                 else
                     builder.Append(address.Name);
                 builder.Append(") ");
 
                 // email address
                 if (string.IsNullOrEmpty(address.Address))
-                    builder.Append("NULL");
+                    builder.Append("(null)");
                 else
                     builder.Append(address.Address);
 
@@ -156,24 +155,21 @@ namespace EmailCore
         }
 
         /// <summary> Returns a string containing the Exception messages and stack traces of a List<Exception>. Returns null if List<Exception> is empty or null. </summary>
-        private static string BuildExceptionInfo(List<Exception> exceptions)
+        private static string BuildErrorInfoString(List<SenderError> errors)
         {
-            if (exceptions == null || exceptions.Count == 0)
-                return null;
+            if (errors == null || errors.Count == 0)
+                return "(null)";
 
             var builder = new StringBuilder();
 
-            for (int i = 0; i < exceptions.Count; i++)
+            for (int i = 0; i < errors.Count; i++)
             {
                 // break line
                 builder.Append("\n");
                 // ex message
                 builder.Append(i + 1);
                 builder.Append(") ");
-                builder.Append(exceptions[i].Message);
-                builder.Append(' ');
-                // ex stack trace
-                builder.Append(exceptions[i].StackTrace);
+                builder.Append(errors[i].Message);
                 builder.Append(", ");
             }
             // remove trailing comma

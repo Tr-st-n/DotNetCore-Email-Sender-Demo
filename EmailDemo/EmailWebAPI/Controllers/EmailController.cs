@@ -87,11 +87,11 @@ namespace EmailWebAPI.Controllers
             if (result.Successful)
                 return StatusCode(200);
 
-            if (result is RichSenderResult richResult)
+            if (result is RichSenderResult richResult && richResult.HasErrors())
             {
-                var lastEx = richResult.Exceptions.Last();
+                var lastError = richResult.LastError();
 
-                if (lastEx is TimeoutException || lastEx is TaskCanceledException || lastEx is OperationCanceledException)
+                if (lastError.Kind == SenderErrorKind.TimeOut)
                     return StatusCode(408, $"Sending the email(s) was canceled, it was taking too much time (>{_emConfig.TotalTimeout}ms).");
             }
 
