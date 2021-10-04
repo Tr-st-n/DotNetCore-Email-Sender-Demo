@@ -15,5 +15,9 @@ namespace EmailCore
         public string Message {  get; set; }
     }
 
-    public enum SenderErrorKind { Generic, TimeOut }
+    public enum SenderErrorKind : int 
+    { 
+        Generic = 500, // Internal Server Error
+        TimeOut = 408 // Request Timeout
+    }
 }

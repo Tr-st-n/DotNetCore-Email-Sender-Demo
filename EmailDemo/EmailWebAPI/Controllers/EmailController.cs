@@ -92,10 +92,10 @@ namespace EmailWebAPI.Controllers
                 var lastError = richResult.LastError();
 
                 if (lastError.Kind == SenderErrorKind.TimeOut)
-                    return StatusCode(408, $"Sending the email(s) was canceled, it was taking too much time (>{_emConfig.TotalTimeout}ms).");
+                    return StatusCode((int)lastError.Kind, $"A timeout occurred while attempting to send an email (took >{_emConfig.TotalTimeout}ms).");
             }
 
-            return StatusCode(500, $"An error occurred while attempting to send email.");
+            return StatusCode(500, $"An error occurred while attempting to send an email.");
         }
     }
 }
