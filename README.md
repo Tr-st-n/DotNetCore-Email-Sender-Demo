@@ -114,7 +114,8 @@ The following projects rely on the dependences:
     | Message.cs          |                 | Class     | The recipients, subject, body and attachments of an email. |
     | RichSenderResult.cs | Results         | Class     | Inherits `BaseSenderResult`. Has property `List<SenderError>` `Errors` for controller to return rich feedback to client. |
     | Sender.cs           | Senders         | Class     | Implements `ISender` interface. Sends an email and returns `ISenderResult` that `is` a `RichSenderResult`. |
-    | SenderError.cs      | Results         | Class & Enum | `SenderError`: has `string` `Message` and `SenderErrorKind` `Kind` members. `SenderErrorKind` is an enum that contains `Generic` and `TimeOut` constants. |
+    | SenderError.cs      | Results         | Class     | Has `string` `Message` and `SenderErrorKind` `Kind` properties. |
+    | SenderErrorKind.cs  | Results         | Enum      | Enum that contains `Generic` and `TimeOut` named constants. |
 
 ### EmailWebAPI
 - [Repo](/EmailDemo/EmailWebAPI)
