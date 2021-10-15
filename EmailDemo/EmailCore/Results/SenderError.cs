@@ -10,10 +10,4 @@
         public SenderErrorKind Kind {  get; set; }
         public string Message {  get; set; }
     }
-
-    public enum SenderErrorKind : int 
-    { 
-        Generic = 500, // Internal Server Error
-        TimeOut = 408 // Request Timeout
-    }
 }
