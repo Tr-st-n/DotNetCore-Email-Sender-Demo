@@ -103,7 +103,7 @@ The following projects rely on the dependences:
 - [Repo](/EmailDemo/EmailCore)
 - Namespace: `EmailCore`
 - **Summary**: Sends emails using the settings in the [appsettings.json](/EmailDemo/EmailWebAPI/appsettings.json) and logs and returns results.
-- Classes & Interfaces:
+- Files:
     | File Name           | (Sub) Namespace | Kind      | Summary  |
     |---------------------|-----------------|-----------|----------|
     | Addressee.cs        |                 | Class     | Properties hold a `string` `Name` and an email `Address`. Contains a method `Valid()` that returns a boolean (if `Address` is a syntactically valid email address). |
