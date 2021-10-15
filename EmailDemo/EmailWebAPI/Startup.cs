@@ -1,4 +1,5 @@
 using EmailCore;
+using EmailCore.Senders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;

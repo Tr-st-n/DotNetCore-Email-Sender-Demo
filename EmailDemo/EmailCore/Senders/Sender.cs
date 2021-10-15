@@ -8,8 +8,9 @@ using System.Text;
 using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
+using EmailCore.Results;
 
-namespace EmailCore
+namespace EmailCore.Senders
 {
     public class Sender : ISender
     {
@@ -23,7 +24,7 @@ namespace EmailCore
         }
 
         /// <summary> Asynchronously sends an email using a EmailCore.Message argument. Returns a EmailCore.BaseSenderResult. </summary>
-        public async Task<BaseSenderResult> SendAsync(Message message)
+        public async Task<ISenderResult> SendAsync(Message message)
         {
             var builtMessage = await BuildMessage(message);
             return await TrySendAsync(builtMessage);

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace EmailCore
+namespace EmailCore.Results
 {
     public class RichSenderResult : BaseSenderResult
     {

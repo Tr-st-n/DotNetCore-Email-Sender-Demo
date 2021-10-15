@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EmailCore
+﻿namespace EmailCore.Results
 {
     public class SenderError
     {

@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using EmailCore.Results;
+using EmailCore.Senders;
 
 namespace EmailWebAPI.Controllers
 {
@@ -82,7 +84,7 @@ namespace EmailWebAPI.Controllers
         }
 
         /// <summary> Returns IActionResult using a EmailCore.BaseSenderResult. </summary>
-        private IActionResult GetStatus(BaseSenderResult result)
+        private IActionResult GetStatus(ISenderResult result)
         {
             if (result.Successful)
                 return StatusCode(200);
