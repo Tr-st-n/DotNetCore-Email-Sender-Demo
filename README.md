@@ -104,16 +104,17 @@ The following projects rely on the dependences:
 - Namespace: `EmailCore`
 - **Summary**: Sends emails using the settings in the [appsettings.json](/EmailDemo/EmailWebAPI/appsettings.json) and logs and returns results.
 - Classes & Interfaces:
-    | File Name                                  | Kind            | Summary  |
-    |--------------------------------------------|-----------------|----------|
-    | Addressee.cs                               | Public Class    | Properties hold a `string` `Name` and an email `Address`. Contains a method `Valid()` that returns a boolean (if `Address` is a syntactically valid email address). |
-    | BaseSenderResult.cs                        | Abstract Class  | Abstract class containing a `bool` `Successful`. Returned by `ISender` interface. |
-    | EmailConfig.cs                             | Public Class    | Used as a singleton for holding our email configuration from `appsettings.json`. |
-    | ISender.cs                                 | Interface       | Interface contracting a class to accept a `Message` argument and return a `BaseSenderResult`. |
-    | Message.cs                                 | Public Class    | All of the information in an email: recipients (`List<MimeKit.MailboxAddress>` `To`), `string` `Subject`, `string` `Body`, attachments (`IFormFileCollection` `Attachments`). |
-    | RichSenderResult.cs                        | Public Class    | Inherits from BaseSenderResult. Implements property containing `List<SenderError>` `Errors` for controller to return rich feedback to client. |
-    | Sender.cs                                  | Public Class    | Implements `ISender` interface. Sends an email and returns the results in a `BaseSenderResult` that can be cast to a `RichSenderResult` optionally. |
-    | SenderError.cs                             | Public Class & Enum | `SenderError`: has `string` `Message` and `SenderErrorKind` `Kind` members. `SenderErrorKind` is an enum that contains `Generic` and `TimeOut` constants. |
+    | File Name           | (Sub) Namespace | Kind      | Summary  |
+    |---------------------|-----------------|-----------|----------|
+    | Addressee.cs        |                 | Class     | Properties hold a `string` `Name` and an email `Address`. Contains a method `Valid()` that returns a boolean (if `Address` is a syntactically valid email address). |
+    | BaseSenderResult.cs | Results         | Class     | Implements `ISenderResult`. |
+    | EmailConfig.cs      |                 | Class     | Used as a singleton for holding our email configuration from `appsettings.json`. |
+    | ISender.cs          | Senders         | Interface | Interface contracting a `SendAsync` method to accept a `Message` argument and return a `BaseSenderResult`. |
+    | ISenderResult.cs    | Results         | Interface | Interface contracting a `bool` property named `Successful`. Used by `ISender` interface. |
+    | Message.cs          |                 | Class     | The recipients, subject, body and attachments of an email. |
+    | RichSenderResult.cs | Results         | Class     | Inherits `BaseSenderResult`. Has property `List<SenderError>` `Errors` for controller to return rich feedback to client. |
+    | Sender.cs           | Senders         | Class     | Implements `ISender` interface. Sends an email and returns `ISenderResult` that `is` a `RichSenderResult`. |
+    | SenderError.cs      | Results         | Class & Enum | `SenderError`: has `string` `Message` and `SenderErrorKind` `Kind` members. `SenderErrorKind` is an enum that contains `Generic` and `TimeOut` constants. |
 
 ### EmailWebAPI
 - [Repo](/EmailDemo/EmailWebAPI)
